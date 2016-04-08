@@ -1,2 +1,8 @@
-new
-<%= @user %>
+<h2>Let's create a new app!</h2>
+
+<%= form_for(@app) do | f | %>
+    <div>
+        <%= f.text_area :name, placeholder: "Just enter a name and press enter" %>
+    </div>
+    <%= f.submit "Create" %>
+<% end %>
