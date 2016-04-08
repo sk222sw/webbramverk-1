@@ -4,6 +4,11 @@ class UsersController < ApplicationController
         
     end
     
+    def show
+        @user = get_user
+        @apps = @user.apps
+    end
+    
     def new
        @user = User.new 
     end
@@ -12,9 +17,9 @@ class UsersController < ApplicationController
         @user = User.new(user_params)
         if @user.save
             session[:userid] = @user.id
-            redirect_to apikey_path
+            redirect_to @user
         else
-            render :action => "new"    
+            render :action => "new"
         end
     end
     
@@ -24,7 +29,7 @@ class UsersController < ApplicationController
         u = User.find_by_email(params[:email])
         if u && u.authenticate(params[:password])
             session[:userid] = u.id
-            redirect_to apikey_path
+            redirect_to u
         else
             flash[:notice] = "Failed to login"
             redirect_to root_path
@@ -40,6 +45,10 @@ class UsersController < ApplicationController
     
     def user_params
        params.require(:user).permit(:email, :password, :password_confirmation)
+    end
+
+    def get_user
+        @user = User.find(params[:id]) 
     end
 
 end

@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
     has_secure_password
+    has_many :apps
     
     validates :email,
               :presence => {:message => "du måste ange epost"},

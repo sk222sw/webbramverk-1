@@ -6,12 +6,15 @@ Rails.application.routes.draw do
   root 'users#index'
   
   resources :users
+  resources :apps
   
   get "apikeys" => "apikeys#show", as: :apikey
   
+  # get "apps" => "apps#show", as: :app
+  
   post "login"  => "users#login",   as: :login
   get  "logout" => "users#logout",  as: :logout
-
+  
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

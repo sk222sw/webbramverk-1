@@ -13,7 +13,6 @@ class ApplicationController < ActionController::Base
   
   def require_login
     if current_user.nil? then
-      # todo meddelande?
       flash[:notice] = "Please log in"
       redirect_to root_path
     end
