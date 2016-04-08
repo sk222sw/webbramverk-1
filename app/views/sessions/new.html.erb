@@ -1,0 +1,16 @@
+<h1>log in</h1>
+
+<div id="login">
+    <fieldset>
+        <%= form_for(:session, url: login_path) do |f| %>
+          <%= f.label :email %>
+          <%= f.email_field :email %>
+        
+          <%= f.label :password %>
+          <%= f.password_field :password, required: true %>          
+        
+          <%= f.submit "Log in" %>
+        <% end %>
+    </fieldset>
+    <%= link_to "Register", new_user_path %>
+</div>

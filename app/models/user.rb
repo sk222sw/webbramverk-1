@@ -8,4 +8,7 @@ class User < ActiveRecord::Base
               
     validates_format_of :email, :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i,
                         :presence => {:message => "felaktig epost"}
+    has_secure_password
+    validates :password, presence: true, length: { minimum: 1 }
+    
 end

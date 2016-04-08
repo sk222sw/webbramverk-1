@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+    include SessionsHelper
+
     def index
         
     end
@@ -16,6 +18,7 @@ class UsersController < ApplicationController
     def create
         @user = User.new(user_params)
         if @user.save
+            log_in @user
             session[:userid] = @user.id
             redirect_to @user
         else
@@ -28,6 +31,7 @@ class UsersController < ApplicationController
     def login
         u = User.find_by_email(params[:email])
         if u && u.authenticate(params[:password])
+            log_in u
             session[:userid] = u.id
             redirect_to u
         else
