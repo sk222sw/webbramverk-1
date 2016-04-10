@@ -1,6 +1,10 @@
 class UsersController < ApplicationController
-
     include SessionsHelper
+    before_action :require_login, only: [:show]
+    before_action :get_user, only: [:show]
+    before_action :correct_user, only: [:show]
+    before_action :logged_in_user, only: [:show]
+
 
     def index
         
@@ -33,7 +37,7 @@ class UsersController < ApplicationController
         if u && u.authenticate(params[:password])
             log_in u
             session[:userid] = u.id
-            redirect_to u
+            redirect_back_or u
         else
             flash[:notice] = "Failed to login"
             redirect_to root_path
@@ -52,7 +56,24 @@ class UsersController < ApplicationController
     end
 
     def get_user
-        @user = User.find(params[:id]) 
+        @user = User.find(params[:id])
     end
+    
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
+    end
+    
+  def current_user?(user)
+    user == current_user
+  end
 
+  def correct_user
+      @user = User.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
+  end    
+    
 end
