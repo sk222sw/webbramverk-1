@@ -18,6 +18,12 @@ class AppsController < ApplicationController
         end
     end
     
+    def destroy
+        App.find(params[:id]).destroy
+        flash[:notice] = "Deleted app"
+        redirect_to @current_user
+    end
+
     def new
         @app = App.new
     end

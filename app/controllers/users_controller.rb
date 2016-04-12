@@ -11,8 +11,13 @@ class UsersController < ApplicationController
     end
     
     def show
-        @user = get_user
-        @apps = @user.apps
+        if @user.admin?
+            @users = User.all
+            @apps = App.all
+        else
+            @user = get_user
+            @apps = @user.apps
+        end
     end
     
     def new

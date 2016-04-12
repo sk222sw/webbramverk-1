@@ -1,14 +1,48 @@
-<h1>dina appar</h1>
+<% if @user.admin? %>
+    <h1>alla appar</h1>
+<% else %>
+    <h1>dina appar</h1>
+<% end %>
+
 
 <div>
-    <% if @apps.any? %>
-        <% @apps.each do |app| %>
-            <div>
-                <b><%= app.name %></b>
-            </div>
-            <div>
-                <%= app.api_key %>
-            </div>
+    <% if @user.admin %>
+        <% if @users.any? %>
+            <% @users.each do | u | %>
+                <div>
+                    <%= u.email %>
+                </div>
+                <% if u.apps.any? %>
+                    <div>
+                        <% u.apps.each do | a | %>
+                            <div>
+                                <%= a.name %>
+                            </div>
+                            <div>
+                                <%= a.api_key %>
+                            </div>
+                            <%= link_to "delete", a, method: :delete,
+                                                      data: { confirm: "You sure?" } %>
+                        <%end%>
+                    </div>
+                <% else %>
+                    <div>
+                        no apps
+                    </div>                
+                <% end %>
+                <hr />
+            <%end%>
+        <% end %>
+    <% else %>
+        <% if @apps.any? %>
+            <% @apps.each do |app| %>
+                <div>
+                    <b><%= app.name %></b>
+                </div>
+                <div>
+                    <%= app.api_key %>
+                </div>
+            <% end %>
         <% end %>
     <% end %>
 

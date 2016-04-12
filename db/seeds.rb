@@ -8,8 +8,11 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-u1 = User.create(:email => "user@user.com", :password => "hej", 
-                 :password_confirmation => "hej")
+ad = User.create(:email => "admin@app.se", :password => "admin",
+                 :password_confirmation => "admin", admin: true)
+
+u1 = User.create(:email => "user@user.se", :password => "h", 
+                 :password_confirmation => "h")
                  
 u2 = User.create(:email => "hej@user.com", :password => "test", 
                  :password_confirmation => "test")
