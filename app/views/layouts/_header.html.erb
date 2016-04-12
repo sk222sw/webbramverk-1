@@ -1,15 +1,16 @@
-<p>header</p>
-
-<% if logged_in? %>
-    <%= link_to "Users", '#' %>
-    <%= link_to "Profile", current_user %>
-    <%= link_to "Log out", logout_path, method: "delete" %>
-<% else %>
-    <%= link_to "Log in", login_path %>
-<% end %>
-
-<% if flash[:notice] %>
-<div class="notice">
-    <%= flash[:notice] %>
-</div>
-<% end %>
+<header class="u-full-width">
+    <div class="row">
+        <div class="title four columns">
+            <h1>appt-get</h1>
+        </div>
+        <div class="four columns">&nbsp;</div>
+        <nav class="four columns">
+            <% if logged_in? %>
+                <%= link_to "Profile", current_user %>
+                <%= link_to "Log out", logout_path, method: "delete" %>
+            <% else %>
+                <%= link_to "Log in", login_path %>
+            <% end %>
+        </nav>
+    </div>
+</header>

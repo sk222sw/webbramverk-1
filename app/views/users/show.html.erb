@@ -1,10 +1,17 @@
-<% if @user.admin? %>
-    <h1>alla appar</h1>
-<% else %>
-    <h1>dina appar</h1>
-<% end %>
-
-
+<div class="row">
+    <div class="page-title twelwe columns">
+        <% if @user.admin? %>
+            <h2>all apps</h2>
+        <% else %>
+            <h2>your apps</h2>
+        <% end %>
+    </div>
+</div>
+<div class="row">
+    <div class="new-app">
+        <%= link_to "New App", new_app_path %>
+    </div>
+</div>
 <div>
     <% if @user.admin %>
         <% if @users.any? %>
@@ -16,13 +23,13 @@
                     <div>
                         <% u.apps.each do | a | %>
                             <div>
-                                <%= a.name %>
-                            </div>
-                            <div>
+                                <%= a.name %> : 
                                 <%= a.api_key %>
                             </div>
-                            <%= link_to "delete", a, method: :delete,
-                                                      data: { confirm: "You sure?" } %>
+                            <div>
+                                <%= link_to "delete", a, method: :delete, class: "button",
+                                                          data: { confirm: "You sure?" } %>
+                            </div>
                         <%end%>
                     </div>
                 <% else %>
@@ -42,10 +49,14 @@
                 <div>
                     <%= app.api_key %>
                 </div>
+                <div>
+                    <%= link_to "delete", app, method: :delete, class: "button",
+                                              data: { confirm: "You sure?" } %>
+                </div>                
+                <hr />
             <% end %>
         <% end %>
     <% end %>
 
-    <%= link_to "New App", new_app_path %>
 </div>
 

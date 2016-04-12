@@ -44,7 +44,7 @@ class UsersController < ApplicationController
             session[:userid] = u.id
             redirect_back_or u
         else
-            flash[:notice] = "Failed to login"
+            flash[:notice] = "Wrong user info, try again"
             redirect_to root_path
         end
     end

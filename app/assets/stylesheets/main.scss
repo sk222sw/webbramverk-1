@@ -1,0 +1,41 @@
+@import url(https://fonts.googleapis.com/css?family=Raleway);
+
+body {
+    font-family: 'Raleway', sans-serif;
+}
+
+header {
+    background: gold;
+    overflow: auto;
+}
+
+nav {
+    text-align: center;
+}
+
+.title {
+    text-align: center;
+}
+
+.title h1 {
+}
+
+.page-title {
+    text-align: center;
+}
+
+.new-app {
+    // text-align: center;
+}
+
+.input {
+    margin: 0 auto;
+}
+
+.flash-area {
+    height: 30px;
+}
+
+.notice {
+    background: rgba(0, 0, 0, 0.1);
+}
