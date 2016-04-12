@@ -7,3 +7,9 @@
 <% else %>
     <%= link_to "Log in", login_path %>
 <% end %>
+
+<% if flash[:notice] %>
+<div class="notice">
+    <%= flash[:notice] %>
+</div>
+<% end %>
