@@ -3,22 +3,25 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     respond_to :json
     
     def index
-        respond_with Theft.all
-    #   render json: { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: :not_found }
+        if Theft.any?
+            respond_with Theft.all
+        else
+            render json: { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: :not_found }
+        end
     end
     
     def show
        respond_with Theft.find(params[:id])
     end
     
-      def create
+    def create
         theft = Theft.new(theft_params)
         if theft.save
-          render json: theft, status: 201, location: [:api, theft]
+            render json: theft, status: 201, location: [:api, theft]
         else
-          render json: { errors: theft.errors }, status: 422
+            render json: { errors: theft.errors }, status: 422
         end
-      end
+    end
     
       private
     
