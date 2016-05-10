@@ -14,12 +14,10 @@ Rails.application.routes.draw do
   post     'login'       =>   'sessions#create'
   delete   'logout'      =>   'sessions#destroy'
 
-  resources :thefts
-  
   namespace :api, defaults: { format: :json } do
-    resources :thefts
-    scope module: :v1 do
-      resources :thefts
+    scope module: :v1,
+                  constraints: ApiConstraints.new(version: 1, default: true) do
+      resources :thefts, :only => [:show, :index, :create, :update]
     end
   end
 

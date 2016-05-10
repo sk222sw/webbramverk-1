@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class TheftsControllerTest < ActionController::TestCase
+class Api::V1::ApiBaseControllerTest < ActionController::TestCase
   # test "the truth" do
   #   assert true
   # end
