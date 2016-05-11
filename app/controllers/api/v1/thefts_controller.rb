@@ -35,6 +35,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     
     def destroy
         theft = Theft.find(params[:id])
+        
         theft.destroy
         render json: { action: "destroy", message: "Theft removed, ID: #{params[:id]} (hopefully a lost bike was returned to it's owner)"}
     end

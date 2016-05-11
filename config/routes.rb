@@ -1,6 +1,8 @@
 require "api_constraints"
 
 Rails.application.routes.draw do
+  mount Knock::Engine => "/knock"
+  
   get 'sessions/new'
 
   root 'users#index'
