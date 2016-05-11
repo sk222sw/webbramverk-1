@@ -5,11 +5,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     
     def index
         if Theft.any?
-            if params[:creator_id]
-                respond_with Theft.all
-            else
-                render json: { error: "MJAAAU", status: :not_found }
-            end
+            respond_with Theft.all
         else
             render json: { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: :not_found }
         end
@@ -20,9 +16,14 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     end
     
     def create
-        theft = Theft.new(theft_params)
+        theft = Theft.new(theft_params.except(:longitude, :latitude))
 
         theft.creator = current_user
+        position = Position.new
+        position.longitude = theft_params[:longitude]
+        position.latitude = theft_params[:latitude]
+        
+        theft.position = position
         
         if theft.save
             render json: theft, status: 201, location: [:api, theft]
@@ -51,7 +52,8 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
       private
     
         def theft_params
-          params.require(:theft).permit(:time, :description)
+          json_params = ActionController::Parameters.new(JSON.parse(request.body.read))
+          json_params.require(:theft).permit(:description, :time, :longitude, :latitude)
         end
     
 end

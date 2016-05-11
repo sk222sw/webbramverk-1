@@ -32,6 +32,8 @@ ActiveRecord::Schema.define(version: 20160511130345) do
   end
 
   create_table "positions", force: :cascade do |t|
+    t.float    "longitude"
+    t.float    "latitude"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -43,8 +45,8 @@ ActiveRecord::Schema.define(version: 20160511130345) do
 
   create_table "thefts", force: :cascade do |t|
     t.integer  "creator_id"
+    t.integer  "position_id"
     t.datetime "time"
-    t.date     "date"
     t.string   "description"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false

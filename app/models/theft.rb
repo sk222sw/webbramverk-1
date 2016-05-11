@@ -1,5 +1,6 @@
 class Theft < ActiveRecord::Base
     belongs_to :creator
+    belongs_to :position, :dependent => :destroy
     
     validates   :description, 
                 :presence => {:message => "Please provide a description" }
