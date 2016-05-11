@@ -23,6 +23,16 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         end
     end
     
+    def update
+        theft = Theft.find(params[:id])
+        
+        if theft.update(theft_params)
+            render json: theft, status: 200, location: [:api, theft]
+        else
+            render json: { errors: theft.errors }, status: 422
+        end
+    end
+    
       private
     
         def theft_params
