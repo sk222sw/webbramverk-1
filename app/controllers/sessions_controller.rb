@@ -19,8 +19,8 @@ class SessionsController < ApplicationController
     redirect_to root_url
   end
   
-  def current_user
-    @current_user ||= User.find_by(id: session[:userid])
+  def current_app_user
+    @current_app_user ||= User.find_by(id: session[:userid])
   end
   
   def redirect_back_or(default)
@@ -37,7 +37,7 @@ class SessionsController < ApplicationController
   end
   
   def logged_in?
-    !current_user.nil?
+    !current_app_user.nil?
   end
   
 end

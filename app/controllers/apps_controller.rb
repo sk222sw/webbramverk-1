@@ -9,10 +9,10 @@ class AppsController < ApplicationController
     end
 
     def create
-        @app = current_user.apps.build(apps_params)
+        @app = current_app_user.apps.build(apps_params)
         if @app.save
             flash[:notice] = "App created - woop woop!"
-            redirect_to @current_user
+            redirect_to @current_app_user
         else
             flash[:notice] = "Woops, something wen't wrong :/"
         end
@@ -21,7 +21,7 @@ class AppsController < ApplicationController
     def destroy
         App.find(params[:id]).destroy
         flash[:notice] = "Deleted app"
-        redirect_to @current_user
+        redirect_to @current_app_user
     end
 
     def new

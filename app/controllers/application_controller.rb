@@ -7,14 +7,14 @@ class ApplicationController < ActionController::Base
 
   private
   
-  # helper_method :current_user
+  # helper_method :current_app_user
   
-  def current_user
-    @current_user ||= User.find(session[:userid]) if session[:userid]
+  def current_app_user
+    @current_app_user ||= User.find(session[:userid]) if session[:userid]
   end
   
   def require_login
-    if current_user.nil? then
+    if current_app_user.nil? then
       flash[:notice] = "Please log in"
       redirect_to root_path
     end
