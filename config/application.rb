@@ -23,6 +23,9 @@ module Hsp
     # custom validators path
     config.autoload_paths += %W["#{config.root}/app/validators/"]
 
+    # allow c9 ip
+    config.web_console.whitelisted_ips = '85.226.121.137'
+
     # Do not swallow errors in after_commit/after_rollback callbacks.
     config.active_record.raise_in_transactional_callbacks = true
   end
