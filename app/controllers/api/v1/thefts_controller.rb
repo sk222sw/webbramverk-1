@@ -22,7 +22,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     def create
         theft = Theft.new(theft_params)
 
-        theft.creator = Creator.find(current_user.id)
+        theft.creator = current_user
         
         if theft.save
             render json: theft, status: 201, location: [:api, theft]
