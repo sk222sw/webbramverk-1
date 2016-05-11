@@ -20,6 +20,9 @@ Rails.application.routes.draw do
     scope module: :v1,
                   constraints: ApiConstraints.new(version: 1, default: true) do
       resources :thefts, :only => [:show, :index, :create, :update, :destroy]
+      resources :creators, :only => [:show, :index] do
+        resources :thefts, only: [:index]
+      end
     end
   end
 

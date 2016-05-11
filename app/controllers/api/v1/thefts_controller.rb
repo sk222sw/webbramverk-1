@@ -1,10 +1,15 @@
 class Api::V1::TheftsController < Api::V1::ApiBaseController
     skip_before_action :verify_authenticity_token
+    skip_before_action :authenticate, only: [:index, :show]
     respond_to :json
     
     def index
         if Theft.any?
-            respond_with Theft.all
+            if params[:creator_id]
+                respond_with Theft.all
+            else
+                render json: { error: "MJAAAU", status: :not_found }
+            end
         else
             render json: { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: :not_found }
         end
@@ -16,6 +21,9 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     
     def create
         theft = Theft.new(theft_params)
+
+        theft.creator = Creator.find(current_user.id)
+        
         if theft.save
             render json: theft, status: 201, location: [:api, theft]
         else

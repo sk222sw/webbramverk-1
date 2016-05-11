@@ -1,7 +1,7 @@
 class CreateThefts < ActiveRecord::Migration
   def change
     create_table :thefts do |t|
-      t.references :creators
+      t.references :creator
 
       t.datetime :time
       t.date :date
