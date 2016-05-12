@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160511130345) do
+ActiveRecord::Schema.define(version: 20160512151341) do
 
   create_table "apps", force: :cascade do |t|
     t.integer  "user_id"
@@ -39,9 +39,17 @@ ActiveRecord::Schema.define(version: 20160511130345) do
   end
 
   create_table "tags", force: :cascade do |t|
+    t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "tags_thefts", force: :cascade do |t|
+    t.integer "tag_id"
+    t.integer "theft_id"
+  end
+
+  add_index "tags_thefts", ["tag_id", "theft_id"], name: "index_tags_thefts_on_tag_id_and_theft_id"
 
   create_table "thefts", force: :cascade do |t|
     t.integer  "creator_id"

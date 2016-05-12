@@ -21,6 +21,7 @@ Rails.application.routes.draw do
                   constraints: ApiConstraints.new(version: 1, default: true) do
       resources :thefts, :only => [:show, :index, :create, :update, :destroy] do
         resources :positions, only: [:index, :show]
+        resources :tags, only: [:index, :show]
       end
       resources :creators, :only => [:show, :index] do
         resources :thefts, only: [:index]
