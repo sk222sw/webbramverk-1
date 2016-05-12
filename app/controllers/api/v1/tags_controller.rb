@@ -1,8 +1,13 @@
 class Api::V1::TagsController < ApplicationController
+    respond_to :json
     
     def create
         tag = Tag.new(tag_params)
         tag.save
+    end
+   
+    def index
+        respond_with Tag.all
     end
    
         private

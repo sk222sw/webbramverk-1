@@ -1,5 +1,3 @@
-require "uri"
-
 class Api::V1::TheftsController < Api::V1::ApiBaseController
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate, only: [:index, :show]
@@ -10,6 +8,20 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
             if params[:description]
                 description = params[:description]
                 respond_with Theft.where("description like ?", "%#{description}%")
+            elsif params[:tag]
+                # i believe this works, but it doesnt show null values
+                query_tag = params[:tag]
+                theft_ids = []  
+                
+                tags = Tag.where(:name => query_tag)
+
+                tags.each do |tag|
+                   theft_ids << tag.id 
+                end
+
+                thefts = Theft.where(:id => theft_ids)
+
+                respond_with thefts
             else
                 respond_with Theft.all
             end

@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       resources :creators, :only => [:show, :index] do
         resources :thefts, only: [:index]
       end
+      resources :tags, only: [:index]
     end
   end
 
