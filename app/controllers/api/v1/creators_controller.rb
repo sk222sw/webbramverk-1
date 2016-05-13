@@ -1,5 +1,6 @@
-class Api::V1::CreatorController < ApplicationController
+class Api::V1::CreatorsController < ApplicationController
     skip_before_action :authenticate, only: [:index, :show]
+    respond_to :json
     
     def index
         respond_with Creator.all 
