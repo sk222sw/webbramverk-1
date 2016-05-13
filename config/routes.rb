@@ -23,9 +23,7 @@ Rails.application.routes.draw do
         resources :positions, only: [:index, :show]
         resources :tags, only: [:index, :show]
       end
-      resources :creators, :only => [:show, :index] do
-        resources :thefts, only: [:index]
-      end
+      resources :creators, :only => [:show, :index]
       resources :tags, only: [:index]
     end
   end
