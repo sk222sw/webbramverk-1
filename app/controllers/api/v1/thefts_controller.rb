@@ -1,7 +1,15 @@
 class Api::V1::TheftsController < Api::V1::ApiBaseController
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate, only: [:index, :show]
+    rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
     respond_to :json
+    
+    ERROR_NO_THEFTS = { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: 404 }
+    ERROR_NO_TAG_NAME = { error: "Please provide a name for each tag", status: 400 }
+    MESSAGE_THEFT_DELETED = { message: "Theft removed. Hopefully a lost bike was returned to it's owner", status: 200 }
+    ERROR_NO_POSITION = { error: "Please provide both longitude and latitude", status: 400 }
+    ERROR_POSITION_NOT_VALID = { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874", status: 400}
+    RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found.", status: 404}
     
     def index
         if Theft.any?
@@ -26,7 +34,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
                 respond_with Theft.all
             end
         else
-            render json: { error: "Sorry :( no thefts yet... Wait, that's actually a good thing.", status: :not_found }
+            render json: ERROR_NO_THEFTS
         end
     end
     
@@ -43,7 +51,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         if tags = theft_params[:tags]
             tags.each do |tag|
                 if tag[:name].blank?
-                  render json: { error: "Please provide a name for each tag" }
+                  render json: ERROR_NO_TAG_NAME
                   return
                 end
                 theft.tags << Tag.where(tag).first_or_create
@@ -79,7 +87,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         theft = Theft.find(params[:id])
         
         theft.destroy
-        render json: { action: "destroy", message: "Theft removed, ID: #{params[:id]} (hopefully a lost bike was returned to it's owner)"}
+        render json: MESSAGE_THEFT_DELETED
     end
     
       private
@@ -92,7 +100,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         # checking if a position was provided in the body parameters
         def position_provided?
             if theft_params[:longitude].blank? || theft_params[:latitude].blank?
-                render json: { error: "Please provide both longitude and latitude" }
+                render json: ERROR_NO_POSITION
                 return false
             else
                 return true
@@ -105,13 +113,17 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
                is_float?(theft_params[:latitude])
                 return true
             else
-                render json: { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874"}
+                render json: ERROR_POSITION_NOT_VALID
                 return false
             end
         end
 
         def is_float? string
            true if Float(string) rescue false 
+        end
+
+        def resource_not_found
+            render json: RESOURCE_NOT_FOUND
         end
 
 end
