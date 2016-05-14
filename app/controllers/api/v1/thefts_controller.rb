@@ -34,7 +34,9 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
 
             respond_with thefts
         else
-            respond_with Theft.all
+            # sort by time column and return all
+            thefts = Theft.all.sort_by &:time
+            respond_with thefts.reverse!
         end
     end
     
