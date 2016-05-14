@@ -22,3 +22,4 @@ u2.apps << a3
 
 # front-end users/creators
 c1 = Creator.create(:email => "so@nny.com", :password => "hej", :name => "inget")
+

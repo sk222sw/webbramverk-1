@@ -1,3 +1,5 @@
+
+
 class Api::V1::TheftsController < Api::V1::ApiBaseController
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate, only: [:index, :show]
@@ -9,32 +11,30 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     MESSAGE_THEFT_DELETED = { message: "Theft removed. Hopefully a lost bike was returned to it's owner", status: 200 }
     ERROR_NO_POSITION = { error: "Please provide both longitude and latitude", status: 400 }
     ERROR_POSITION_NOT_VALID = { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874", status: 400}
-    RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found.", status: 404}
+    ERROR_RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found.", status: 404}
     
     def index
-        if Theft.any?
-            if params[:description]
-                description = params[:description]
-                respond_with Theft.where("description like ?", "%#{description}%")
-            elsif params[:tag]
-                # i believe this works, but it doesnt show null values
-                # TODO: There's probably some Rails magic to simplify this
-                query_tag = params[:tag]
-                theft_ids = []
-                tags = Tag.where(:name => query_tag)
+        render json: ERROR_NO_THEFTS and return unless Theft.any?
+        if params[:thefts_near]
+            return_nearby_thefts
+        elsif params[:description]
+            description = params[:description]
+            respond_with Theft.where("description like ?", "%#{description}%")
+        elsif params[:tag]
+            # TODO: There's probably some Rails magic to simplify this
+            query_tag = params[:tag]
+            theft_ids = []
+            tags = Tag.where(:name => query_tag)
 
-                tags.each do |tag|
-                   theft_ids << tag.id 
-                end
-
-                thefts = Theft.where(:id => theft_ids)
-
-                respond_with thefts
-            else
-                respond_with Theft.all
+            tags.each do |tag|
+               theft_ids << tag.id 
             end
+
+            thefts = Theft.where(:id => theft_ids)
+
+            respond_with thefts
         else
-            render json: ERROR_NO_THEFTS
+            respond_with Theft.all
         end
     end
     
@@ -63,7 +63,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         position = Position.new
         position.longitude = theft_params[:longitude]
         position.latitude = theft_params[:latitude]
-        
+                
         theft.position = position
         
         if theft.save
@@ -128,7 +128,6 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         end
         
         def valid_position_provided?
-            10.times {puts theft_params[:longitude]}
             if is_float?(theft_params[:longitude]) &&
                is_float?(theft_params[:latitude])
                 return true
@@ -143,7 +142,32 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         end
 
         def resource_not_found
-            render json: RESOURCE_NOT_FOUND
+            render json: ERROR_RESOURCE_NOT_FOUND
         end
 
+        def return_nearby_thefts
+            position = params[:thefts_near].split(",")
+            
+            render json: ERROR_NO_POSITION and return if position.count < 2
+            pos = Position.new
+            pos.latitude = position[0]
+            pos.longitude = position[1]
+            nearby_thefts_ids = []
+            pos.address = pos.get_address
+            # near = pos.near(pos.latitude, pos.longitude, 10, :units => :km)
+            nearby = Position.near([pos.latitude, pos.longitude], 10, :units => :km)
+            # 100.times { puts near.count }
+            
+            nearby.each do |n|
+              nearby_thefts_ids << n.id
+            end
+            
+            nearby_thefts = Theft.find(nearby_thefts_ids)
+            if nearby_thefts.count == 0
+                render json: { message: "No nearby thefts. Please steal a bike and try again (just kidding...)", status: 404 }
+            else
+                render json: { lat: pos.latitude, lon: pos.longitude, nearby_thefts: nearby_thefts, status: 200 }
+            end
+            
+        end
 end
