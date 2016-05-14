@@ -1,8 +1,10 @@
 class TagSerializer < ActiveModel::Serializer
-  attributes :id, :name
+  attributes :id, :name, :links
   
   def links
-    { self: tag_path(object.id) }
+    { 
+        self: api_tag_path(object.id) 
+    }
   end
   
 end

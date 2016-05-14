@@ -2,9 +2,13 @@ class Api::V1::PositionsController < ApplicationController
     respond_to :json
     
     def index
-        theft = Theft.find(params[:theft_id])
-        pos_id = theft.position_id
-        respond_with Position.find(pos_id)
+        if params[:theft_id]
+            theft = Theft.find(params[:theft_id])
+            pos_id = theft.position_id
+            respond_with Position.find(pos_id)
+        else
+           respond_with Position.all 
+        end
     end
     
     def show

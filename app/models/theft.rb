@@ -7,6 +7,5 @@ class Theft < ActiveRecord::Base
                 :presence => {:message => "Please provide a description" }
                 
     validates   :time, 
-                :presence => {:message => "Please provide a proper date (time optional) YYYY-MM-DD [HH:MM]" }
-
+                :presence => {:message => "Please provide a proper date (time optional) YYYY-MM-DD HH:MM" }
 end

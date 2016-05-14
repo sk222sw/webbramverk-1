@@ -36,11 +36,16 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     
     def create
         return unless position_provided?
+        return unless valid_position_provided?
         
         theft = Theft.new(theft_params.except(:longitude, :latitude, :tags))
         
         if tags = theft_params[:tags]
             tags.each do |tag|
+                if tag[:name].blank?
+                  render json: { error: "Please provide a name for each tag" }
+                  return
+                end
                 theft.tags << Tag.where(tag).first_or_create
             end
         end
@@ -87,11 +92,26 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         # checking if a position was provided in the body parameters
         def position_provided?
             if theft_params[:longitude].blank? || theft_params[:latitude].blank?
-                render json: { error: "Please provide a position" }
+                render json: { error: "Please provide both longitude and latitude" }
                 return false
             else
                 return true
             end
         end
-    
+        
+        def valid_position_provided?
+            10.times {puts theft_params[:longitude]}
+            if is_float?(theft_params[:longitude]) &&
+               is_float?(theft_params[:latitude])
+                return true
+            else
+                render json: { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874"}
+                return false
+            end
+        end
+
+        def is_float? string
+           true if Float(string) rescue false 
+        end
+
 end

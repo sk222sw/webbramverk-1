@@ -7,7 +7,16 @@ class Api::V1::TagsController < ApplicationController
     end
    
     def index
-        respond_with Tag.all
+        if params[:theft_id]
+            theft = Theft.find(params[:theft_id])
+            respond_with theft.tags
+        else
+            respond_with Tag.all
+        end
+    end
+    
+    def show
+        respond_with Tag.find(params[:id])
     end
    
         private

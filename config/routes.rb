@@ -24,7 +24,8 @@ Rails.application.routes.draw do
         resources :tags, only: [:index, :show]
       end
       resources :creators, :only => [:show, :index]
-      resources :tags, only: [:index]
+      resources :tags, only: [:index, :show]
+      resources :positions, only: [:index, :show]
     end
   end
 
