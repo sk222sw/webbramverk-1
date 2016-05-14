@@ -1,8 +1,9 @@
-
-
 class Api::V1::TheftsController < Api::V1::ApiBaseController
     skip_before_action :verify_authenticity_token
     skip_before_action :authenticate, only: [:index, :show]
+    
+    before_action :pagination_params
+    
     rescue_from ActiveRecord::RecordNotFound, :with => :resource_not_found
     respond_to :json
     
@@ -12,6 +13,9 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     ERROR_NO_POSITION = { error: "Please provide both longitude and latitude", status: 400 }
     ERROR_POSITION_NOT_VALID = { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874", status: 400}
     ERROR_RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found.", status: 404}
+    ERROR_NO_TAG_FOUND = { error: "No tag with that name could be found.", status: 404 }
+    ERROR_WRONG_USER_DELETE = { error: "Only the creator of the theft resource can delete it. ", status: 401 }
+    ERROR_WRONG_USER_UPDATE = { error: "Only the creator of the theft resource can update it. ", status: 401 }
     
     def index
         render json: ERROR_NO_THEFTS and return unless Theft.any?
@@ -24,19 +28,21 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
             # TODO: There's probably some Rails magic to simplify this
             query_tag = params[:tag]
             theft_ids = []
-            tags = Tag.where(:name => query_tag)
-
-            tags.each do |tag|
-               theft_ids << tag.id 
+            tag = Tag.where("name like ?", "%#{query_tag}%").first
+            
+            if tag.present?
+                thefts_with_search_tag = tag.thefts.limit(@limit).offset(@offset)
+                response = { offset: @offset, limit: @limit, tag: params[:tag], thefts: ActiveModel::ArraySerializer.new(thefts_with_search_tag) }
+                respond_with response
+            else
+               render json: ERROR_NO_TAG_FOUND
             end
-
-            thefts = Theft.where(:id => theft_ids)
-
-            respond_with thefts
         else
             # sort by time column and return all
-            thefts = Theft.all.sort_by &:time
-            respond_with thefts.reverse!
+            thefts = Theft.all.limit(@limit).offset(@offset).sort_by &:time
+            thefts_rev = thefts.reverse
+            response = { offset: @offset, limit: @limit, thefts: ActiveModel::ArraySerializer.new(thefts_rev) }
+            respond_with response
         end
     end
     
@@ -80,6 +86,9 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         return unless valid_position_provided?
 
         theft = Theft.find(params[:id])
+        
+        render json: ERROR_WRONG_USER_UPDATE and return unless current_user == theft.creator
+        
         theft[:position][:longitude] = params[:longitude]
         theft[:position][:latitude] = params[:latitude]
         
@@ -107,7 +116,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     
     def destroy
         theft = Theft.find(params[:id])
-        
+        render json: ERROR_WRONG_USER_DELETE and return unless current_user == theft.creator
         theft.destroy
         render json: MESSAGE_THEFT_DELETED
     end
@@ -151,18 +160,19 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
             position = params[:thefts_near].split(",")
             
             render json: ERROR_NO_POSITION and return if position.count < 2
+            
             pos = Position.new
             pos.latitude = position[0]
             pos.longitude = position[1]
             nearby_thefts_ids = []
             pos.address = pos.get_address
-            # near = pos.near(pos.latitude, pos.longitude, 10, :units => :km)
-            nearby = Position.near([pos.latitude, pos.longitude], 10, :units => :km)
-            # 100.times { puts near.count }
-            
+
+            nearby = Position.near([pos.latitude, pos.longitude], 10000)
             nearby.each do |n|
               nearby_thefts_ids << n.id
             end
+            
+            10.times { puts pos.latitude, pos.longitude }
             
             nearby_thefts = Theft.find(nearby_thefts_ids)
             if nearby_thefts.count == 0

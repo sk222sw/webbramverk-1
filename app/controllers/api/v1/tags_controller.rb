@@ -7,7 +7,7 @@ class Api::V1::TagsController < ApplicationController
     end
    
     def index
-        if params[:theft_id]
+        elsif params[:theft_id]
             theft = Theft.find(params[:theft_id])
             respond_with theft.tags
         else
