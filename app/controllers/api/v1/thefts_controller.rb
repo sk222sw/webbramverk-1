@@ -84,6 +84,18 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         theft.position.longitude = theft_params[:longitude]
         theft.position.latitude = theft_params[:latitude]
 
+        theft.tags = []
+
+        if tags = theft_params[:tags]
+            tags.each do |tag|
+                if tag[:name].blank?
+                  render json: ERROR_NO_TAG_NAME
+                  return
+                end
+                theft.tags << Tag.where(tag).first_or_create
+            end
+        end
+
         if theft.update(theft_params.except(:longitude, :latitude, :tags))
             render json: theft, status: 200, location: [:api, theft]
         else
