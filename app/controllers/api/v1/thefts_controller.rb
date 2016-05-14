@@ -18,9 +18,9 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
                 respond_with Theft.where("description like ?", "%#{description}%")
             elsif params[:tag]
                 # i believe this works, but it doesnt show null values
+                # TODO: There's probably some Rails magic to simplify this
                 query_tag = params[:tag]
-                theft_ids = []  
-                
+                theft_ids = []
                 tags = Tag.where(:name => query_tag)
 
                 tags.each do |tag|
@@ -74,9 +74,17 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     end
     
     def update
+        return unless position_provided?
+        return unless valid_position_provided?
+
         theft = Theft.find(params[:id])
+        theft[:position][:longitude] = params[:longitude]
+        theft[:position][:latitude] = params[:latitude]
         
-        if theft.update(theft_params)
+        theft.position.longitude = theft_params[:longitude]
+        theft.position.latitude = theft_params[:latitude]
+
+        if theft.update(theft_params.except(:longitude, :latitude, :tags))
             render json: theft, status: 200, location: [:api, theft]
         else
             render json: { errors: theft.errors }, status: 422

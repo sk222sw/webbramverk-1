@@ -1,7 +1,7 @@
 require "api_constraints"
 
 Rails.application.routes.draw do
-  mount Knock::Engine => "/knock"
+  mount Knock::Engine => "/knock" # used for API authentification
   
   get 'sessions/new'
 
@@ -16,6 +16,7 @@ Rails.application.routes.draw do
   post     'login'       =>   'sessions#create'
   delete   'logout'      =>   'sessions#destroy'
 
+  # API END POINTS
   namespace :api, defaults: { format: :json } do
     scope module: :v1,
                   constraints: ApiConstraints.new(version: 1, default: true) do
@@ -28,20 +29,4 @@ Rails.application.routes.draw do
       resources :positions, only: [:index, :show]
     end
   end
-
-  # api end points
-  # namespace :api, defaults: { format: :json } do
-    
-  #   scope module: :v1,
-  #               constraints: ApiConstraints.new(version: 1, default: true) do
-  #     resources :thefts
-  #   end
-  # end
-  
-  # scope "/api" do
-  #   scope "/v1" do
-  #     scope "/the"
-  #   end
-  # end
-  
 end
