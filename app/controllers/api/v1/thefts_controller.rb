@@ -12,7 +12,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
     MESSAGE_THEFT_DELETED = { message: "Theft removed. Hopefully a lost bike was returned to it's owner", status: 200 }
     ERROR_NO_POSITION = { error: "Please provide both longitude and latitude", status: 400 }
     ERROR_POSITION_NOT_VALID = { error: "Longitude and latitude must be numbers and decimals separated with a full stop, eg 2387.3874", status: 400}
-    ERROR_RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found.", status: 404}
+    ERROR_RESOURCE_NOT_FOUND = { error: "No resource with the provided ID could be found." }
     ERROR_NO_TAG_FOUND = { error: "No tag with that name could be found.", status: 404 }
     ERROR_WRONG_USER_DELETE = { error: "Only the creator of the theft resource can delete it. ", status: 401 }
     ERROR_WRONG_USER_UPDATE = { error: "Only the creator of the theft resource can update it. ", status: 401 }
@@ -39,7 +39,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
             end
         else
             # sort by time column and return all
-            thefts = Theft.all.limit(@limit).offset(@offset).sort_by &:time
+            thefts = Theft.all.limit(@limit).offset(@offset).sort_by &:created_at
             thefts_rev = thefts.reverse
             response = { offset: @offset, limit: @limit, thefts: ActiveModel::ArraySerializer.new(thefts_rev) }
             respond_with response
@@ -153,7 +153,7 @@ class Api::V1::TheftsController < Api::V1::ApiBaseController
         end
 
         def resource_not_found
-            render json: ERROR_RESOURCE_NOT_FOUND
+            render json: ERROR_RESOURCE_NOT_FOUND, status: 404
         end
 
         def return_nearby_thefts
