@@ -1,3 +1,6 @@
+## API DOCUMENTATION
+[API](https://github.com/sk222sw/webbramverk-1/wiki)
+
 ## 1dv450 - labb 1
 
 Applikationen är utvecklad i Linux-miljö med `rails version 4.2.5` och `ruby version 2.3.0`
