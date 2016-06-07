@@ -19,11 +19,11 @@ gem 'knock'
 gem 'active_model_serializers'
 
 gem 'rack-cors', :require => 'rack/cors'
+gem 'web-console', '2.0.0'
 
 group :development, :test do
   gem 'byebug'
   gem 'sqlite3',     '1.3.9'
-  gem 'web-console', '2.0.0'
   gem 'spring',      '1.1.3'  
 end
 
