@@ -16,7 +16,9 @@ gem 'geocoder'
 gem 'devise'
 gem 'knock'
 
-gem 'active_model_serializers'
+# gem 'active_model_serializers'
+gem 'active_model_serializers', '~> 0.9.5'
+
 
 gem 'rack-cors', :require => 'rack/cors'
 gem 'web-console', '2.0.0'
